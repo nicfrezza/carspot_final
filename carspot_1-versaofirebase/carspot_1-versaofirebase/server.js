@@ -25,6 +25,7 @@ try {
     process.exit(1)
 }
 
+
 const db = admin.firestore();
 
 const app = express();
