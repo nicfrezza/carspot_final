@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="https://cdn.pixabay.com/photo/2016/06/15/16/47/auto-1459346_1280.png" type="image/png">
+    <title>Auto Vagas - Encontre sua vaga ideal</title>
+    <style>
+        :root {
+            --primary-color: #2ECC71;
+            --text-color: #FFFFFF;
+            --background-color: #000000;
+            --accent-color: #404040;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .background-image {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            left: 0;
+            top: 0;
+            object-fit: cover;
+            filter: brightness(0.3) grayscale(40%);
+            z-index: -2;
+        }
+
+        .gradient-overlay {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(0, 0, 0, 0.95) 0%,
+                rgba(0, 0, 0, 0.85) 40%,
+                rgba(46, 204, 113, 0.15) 100%
+            );
+            z-index: -1;
+        }
+
+        .content-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: max(2rem, 5vw);
+            gap: 2rem;
+        }
+
+        .main-text {
+            font-size: clamp(2rem, 5vw, 4rem);
+            line-height: 1.2;
+            margin-top: clamp(2rem, 10vh, 8rem);
+        }
+
+        .features-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: clamp(1rem, 3vw, 2rem);
+            width: 100%;
+            margin-top: auto;
+            padding: clamp(1rem, 3vw, 2rem);
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: clamp(1rem, 3vw, 1.5rem);
+            border-radius: 12px;
+            text-align: center;
+            transform: translateY(100px);
+            opacity: 0;
+            animation: slideUp 0.5s forwards;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .feature-title {
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-description {
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            opacity: 0.8;
+        }
+
+        .cta-container {
+            display: flex;
+            gap: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s forwards 0.5s;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        
+    .button {
+        background: var(--primary-color);
+        color: var(--background-color);
+        font-size: clamp(0.9rem, 2vw, 1.1rem);
+        font-weight: 600;
+        padding: clamp(0.8rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2.5rem);
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2);
+        transition: var(--transition);
+        white-space: nowrap;
+        max-width: 100%; 
+    }
+
+    @media (max-width: 480px) {
+        .button {
+            font-size: 0.9rem;
+            padding: 0.8rem 1.5rem; 
+            max-width: 200px;
+            margin: 0 auto; 
+        }
+
+        .button i {
+            font-size: 0.9rem; 
+        }
+
+        .cta-container {
+            justify-content: center;
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 320px) {
+        .button {
+            font-size: 0.8rem;
+            padding: 0.7rem 1.2rem;
+            max-width: 180px;
+        }
+    }
+        .car-icon {
+            position: absolute;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: rgba(46, 204, 113, 0.1);
+            animation: float 3s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content-container {
+                padding: 1rem;
+                gap: 1.5rem;
+            }
+
+            .main-text {
+                margin-top: 1rem;
+                text-align: center;
+            }
+
+            .features-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .cta-container {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (min-height: 1000px) {
+            .content-container {
+                justify-content: center;
+                gap: 4rem;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .content-container {
+                justify-content: flex-start;
+                gap: 1rem;
+            }
+
+            .main-text {
+                margin-top: 1rem;
+            }
+
+            .features-container {
+                margin-top: 1rem;
+            }
+        }
+
+        @media (min-width: 2000px) {
+            .content-container {
+                max-width: 1800px;
+            }
+
+            .main-text {
+                font-size: 5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <img class="background-image" src="https://p1.pxfuel.com/preview/830/773/197/woman-interior-man-car-inside-travel.jpg" alt="Background">
+    <div class="gradient-overlay"></div>
+    
+    <div class="content-container">
+        <h1 class="main-text">
+            <span>Encontre sua</span><br>
+            <span>vaga ideal.</span><br>
+            <span>Onde quer que</span><br>
+            <span>esteja</span>
+        </h1>
+        
+        <div class="cta-container">
+            <button class="button" onclick="goToNextPage()">
+                <i class="fas fa-car"></i>
+                Começar agora
+            </button>
+        </div>
+
+        <div class="features-container">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h3 class="feature-title">Localização em tempo real</h3>
+                <p class="feature-description">Encontre vagas próximas a você</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 class="feature-title">Experiência Personalizada</h3>
+                <p class="feature-description">Tenha acesso as suas vagas mais acessadas</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">Segurança garantida</h3>
+                <p class="feature-description">Vagas monitoradas 24h</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function goToNextPage() {
+            const button = document.querySelector('.button');
+            button.style.pointerEvents = 'none';
+            button.style.opacity = '0.8';
+            button.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                window.location.href = 'entrar';
+            }, 300);
+        }
+
+        function createFloatingCars() {
+            const container = document.createElement('div');
+            container.className = 'car-icons-container';
+            
+            for (let i = 0; i < 12; i++) {
+                const car = document.createElement('i');
+                car.className = 'fas fa-car car-icon';
+                car.style.left = Math.random() * 100 + '%';
+                car.style.top = Math.random() * 100 + '%';
+                car.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(car);
+            }
+            
+            document.body.appendChild(container);
+        }
+
+        createFloatingCars();
+    </script>
+</body>
+</html>

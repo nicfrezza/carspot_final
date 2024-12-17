@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://cdn.pixabay.com/photo/2016/06/15/16/47/auto-1459346_1280.png" type="image/png">
+    <title>Esqueci Minha Senha</title>
+
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            background-color: #121212;
+            color: #333;
+            overflow-x: hidden;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            box-sizing: border-box;
+            background: #1E1E1E;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            padding: 30px;
+            max-width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0 0 30px 0;
+            color: #FFFFFF;
+            font-size: 25px;
+        }
+
+        .input-field {
+            margin: 20px 0;
+        }
+
+        .input-field input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 15px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background-color: #2A2A2A;
+            font-size: 15px;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+        }
+
+        .input-field input:focus {
+            outline: none;
+            border-color: #444;
+            background-color: #333;
+        }
+
+        .input-field input::placeholder {
+            color: #888;
+        }
+
+        .button {
+            background-color: #333333;
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .button:hover {
+            background-color: #444444;
+            transform: translateY(-1px);
+        }
+
+        .button:active {
+            transform: translateY(1px);
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .links a {
+            color: #BBBBBB;
+            text-decoration: none;
+            font-size: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #FFFFFF;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+
+    <script type="module">
+        import { getAuth, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmXmb1gBb0VJ1Xw0p4bb7oL4r7Zoc3YBk",
+            authDomain: "carspot-2f0fa.firebaseapp.com",
+            projectId: "carspot-2f0fa",
+            storageBucket: "carspot-2f0fa.appspot.com",
+            messagingSenderId: "645950047928",
+            appId: "1:645950047928:web:f83f572b96143b67f8964d",
+            measurementId: "G-MY034QC436"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        window.resetPassword = async function() {
+            const email = document.getElementById('emailField').value;
+            const button = document.querySelector('.button');
+            
+            if (!email) {
+                alert('Por favor, insira seu e-mail.');
+                return;
+            }
+
+            button.disabled = true;
+            button.style.opacity = '0.7';
+            button.textContent = 'Enviando...';
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                alert('Um link para redefinir sua senha foi enviado para o seu e-mail.');
+            } catch (error) {
+                console.error("Erro ao enviar e-mail:", error.message);
+                alert('Erro ao enviar e-mail. Verifique se o e-mail está correto.');
+            } finally {
+                button.disabled = false;
+                button.style.opacity = '1';
+                button.textContent = 'Enviar Link de Redefinição';
+            }
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Esqueci Minha Senha</h1>
+        
+        <div class="input-field">
+            <input type="email" placeholder="Digite seu e-mail" id="emailField" required />
+        </div>
+
+        <button class="button" onclick="resetPassword()">Enviar Link de Redefinição</button>
+
+        <div class="links">
+            <a href="/entrar">Voltar para o Login</a>
+        </div>
+    </div>
+</body>
+</html>

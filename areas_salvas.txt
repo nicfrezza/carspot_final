@@ -1,0 +1,20 @@
+Vaga 1:
+  Ponto 1: (494, 419)
+  Ponto 2: (458, 454)
+  Ponto 3: (512, 476)
+  Ponto 4: (544, 455)
+Vaga 2:
+  Ponto 1: (466, 424)
+  Ponto 2: (444, 414)
+  Ponto 3: (485, 393)
+  Ponto 4: (510, 400)
+Vaga 3:
+  Ponto 1: (443, 413)
+  Ponto 2: (417, 390)
+  Ponto 3: (450, 353)
+  Ponto 4: (485, 377)
+Vaga 4:
+  Ponto 1: (266, 278)
+  Ponto 2: (249, 286)
+  Ponto 3: (231, 262)
+  Ponto 4: (262, 261)

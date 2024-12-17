@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificações</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="https://cdn.pixabay.com/photo/2016/06/15/16/47/auto-1459346_1280.png" type="image/png">
+
+   <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .update-text {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .subheader {
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .red-dot {
+            color: #ff0000;
+            font-size: 8px;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        .vagas-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .vaga-card {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .vaga-icon {
+            background-color: #f0f0f0;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .vaga-icon i {
+            color: #333;
+            font-size: 20px;
+        }
+
+        .vaga-info {
+            flex: 1;
+        }
+
+        .vaga-titulo {
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .vaga-local {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .vaga-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .indisponivel {
+            background-color: #f0f0f0;
+            color: #666;
+        }
+
+        .disponivel {
+            background-color: #007AFF;
+            color: white;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid #eee;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #999;
+            font-size: 10px;
+            gap: 5px;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .nav-item.active {
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>Notificações</h2>
+        <span class="update-text">Atualizado agora</span>
+    </div>
+
+    <div class="subheader">
+        Suas vagas recorrentes <span class="red-dot">•</span>
+    </div>
+
+    <div class="vagas-container">
+        <div class="vaga-card">
+            <div class="vaga-icon">
+                <i class="fas fa-car"></i>
+            </div>
+            <div class="vaga-info">
+                <div class="vaga-titulo">Vaga Carro</div>
+                <div class="vaga-local">Rua Rio de Janeiro</div>
+            </div>
+            <span class="vaga-status indisponivel">Indisponível</span>
+        </div>
+
+        <div class="vaga-card">
+            <div class="vaga-icon">
+                <i class="fas fa-car"></i>
+            </div>
+            <div class="vaga-info">
+                <div class="vaga-titulo">Vaga Carro</div>
+                <div class="vaga-local">Rua Goiânia</div>
+            </div>
+            <span class="vaga-status indisponivel">Indisponível</span>
+        </div>
+
+        <div class="vaga-card">
+            <div class="vaga-icon">
+                <i class="fas fa-motorcycle"></i>
+            </div>
+            <div class="vaga-info">
+                <div class="vaga-titulo">Vaga Moto</div>
+                <div class="vaga-local">Rua Longuinhos</div>
+            </div>
+            <span class="vaga-status disponivel">Disponível</span>
+        </div>
+
+        <div class="vaga-card">
+            <div class="vaga-icon">
+                <i class="fas fa-motorcycle"></i>
+            </div>
+            <div class="vaga-info">
+                <div class="vaga-titulo">Vaga Moto</div>
+                <div class="vaga-local">Rua Dom Pedro</div>
+            </div>
+            <span class="vaga-status disponivel">Disponível</span>
+        </div>
+
+        <div class="vaga-card">
+            <div class="vaga-icon">
+                <i class="fas fa-car"></i>
+            </div>
+            <div class="vaga-info">
+                <div class="vaga-titulo">Vaga Carro</div>
+                <div class="vaga-local">Rua São Francisco</div>
+            </div>
+            <span class="vaga-status disponivel">Disponível</span>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="/vagas" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Início</span>
+        </a>
+        <a href="/relatorio" class="nav-item active">
+            <i class="fas fa-clipboard"></i>
+            <span>Vagas</span>
+        </a>
+        <a href="recentes" class="nav-item">
+            <i class="fas fa-bell"></i>
+            <span>Alertas</span>
+        </a>
+        <a href="/perfil" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.vaga-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.opacity = '0.7';
+                setTimeout(() => {
+                    this.style.opacity = '1';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carspot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="C:\Users\nicol\Downloads\carspot\carspot_1-versaofirebase\carspot_1-versaofirebase\FundoImagem\logo.png" type="image/png">
+    <link rel="icon" href="https://cdn.pixabay.com/photo/2016/06/15/16/47/auto-1459346_1280.png" type="image/png">
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            background-color: rgb(255, 255, 255);
+            overflow: hidden;
+        }
+
+        img {
+            max-width: 80%;
+            max-height: 80%; 
+            object-fit: cover; 
+            transform: translateY(-100%);
+            animation: slideIn 1s forwards;
+        }
+
+        @keyframes slideIn {
+            to {
+                transform: translateY(0); 
+            }
+        }
+    </style>
+    <script>
+        setTimeout(function() {
+            window.location.href = "inicio.html"; 
+        }, 1500);
+
+
+        if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js')
+    .then(() => console.log('Service Worker registrado!'))
+    .catch(err => console.log('Erro ao registrar o Service Worker', err));
+}
+
+    </script>
+</head>
+<body>
+    <img src="https://i.pinimg.com/564x/c5/4e/6c/c54e6c8246c3e4f4a98f8fc813cfbd21.jpg" alt="Imagem Centralizada">
+</body>
+</html>

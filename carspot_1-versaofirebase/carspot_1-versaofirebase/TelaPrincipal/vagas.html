@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Vagas de Estacionamento</title>
+    <link rel="icon" href="https://cdn.pixabay.com/photo/2016/06/15/16/47/auto-1459346_1280.png" type="image/png">
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwpaJAKtS0szZbE3y400lBoUoC2J4nUeI&libraries=geometry"></script>
+    
+     
+    <style>
+       :root {
+    --primary-color: #2E7D32;
+    --secondary-color: #1B5E20;
+    --dark-color: #121212;
+    --light-color: #1E1E1E;
+    --grey-color: #333333;
+    --text-color: #FFFFFF;
+    --text-secondary: #AAAAAA;
+    --border-radius: 16px;
+    --transition: all 0.3s ease;
+}
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: var(--dark-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 90px;
+        }
+
+        header {
+            background: var(--light-color);
+            padding: 24px 0;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        header h1 {
+            font-size: 28px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .search-container {
+            background: var(--light-color);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 16px;
+        }
+
+        #searchInput {
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid var(--grey-color);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            background: var(--dark-color);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        #searchInput:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+        }
+
+        .search-btn {
+            padding: 16px 32px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .search-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+        }
+
+        #map {
+            height: 450px;
+            width: 100%;
+            border-radius: var(--border-radius);
+            margin-bottom: 32px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        }
+
+        .parking-spot {
+            background-color: var(--light-color);
+            padding: 24px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: var(--transition);
+            border: 1px solid var(--grey-color);
+        }
+
+        .parking-spot:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .parking-spot h3 {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .parking-info {
+            display: grid;
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        .info-item strong {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .status-disponivel {
+            color: #ffffff; 
+            font-weight: 600;
+            padding: 4px 8px;
+            background-color: rgba(76, 175, 80, 0.1);
+            border-radius: 4px;
+            border: 1px solid #ffffff;
+        }
+
+        .status-ocupado {
+            color: #ffffff;
+            font-weight: 600;
+            padding: 4px 8px;
+            background-color: rgba(255, 82, 82, 0.1);
+            border-radius: 4px;
+            border: 1px solid #ffffff;
+        }
+        
+        .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--light-color);
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0; 
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1000;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 11px; 
+    gap: 4px; 
+    transition: var(--transition);
+    padding: 6px 12px; 
+    border-radius: 10px; 
+}
+
+.nav-item i {
+    font-size: 20px;
+}
+        .error-message {
+            background-color: rgba(220, 38, 38, 0.1);
+            color: #DC2626;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-bottom: 24px;
+            animation: slideIn 0.3s ease-out;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 32px;
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-btn {
+                width: 100%;
+            }
+
+            header h1 {
+                font-size: 24px;
+            }
+
+            #map {
+                height: 350px;
+            }
+
+            .parking-spot {
+                padding: 20px;
+            }
+
+            .nav-item {
+        padding: 4px 8px; 
+    }
+            .search-container {
+        background: var(--light-color);
+        border-radius: var(--border-radius);
+        padding: 24px;
+        margin-bottom: 32px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    .search-form {
+        display: flex;
+        gap: 16px;
+    }
+
+    #searchInput {
+        flex: 1;
+        padding: 16px 20px;
+        border: 2px solid var(--grey-color);
+        border-radius: var(--border-radius);
+        font-size: 16px;
+        background: var(--dark-color);
+        color: var(--text-color);
+        transition: var(--transition);
+    }
+
+    .search-btn {
+        padding: 16px 32px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: var(--transition);
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 16px;
+        }
+
+        .search-container {
+            padding: 20px;
+        }
+
+        .search-form {
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        #searchInput {
+            margin-bottom: 12px;
+        }
+
+        .search-btn {
+            width: 100%;
+            margin-top: 8px;
+        }
+    }
+        }
+          
+    .route-btn {
+        width: 100%;
+        margin-top: 12px;
+        padding: 16px;
+        background-color: #1976D2;
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: var(--transition);
+    }
+
+    .route-btn:hover {
+        background-color: #1565C0;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2);
+    }
+    </style>
+
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Busca de Vagas de Estacionamento</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Digite um endereço para buscar vagas próximas...">
+            <button class="search-btn" onclick="searchParkingSpots()">Buscar Vagas</button>
+        </div>
+
+        <div id="map"></div>
+        <div id="resultsList"></div>
+    </div>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <nav class="bottom-nav">
+        <a href="/vagas" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Vagas</span>
+        </a>
+        <a href="/perfil" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmXmb1gBb0VJ1Xw0p4bb7oL4r7Zoc3YBk",
+            authDomain: "carspot-2f0fa.firebaseapp.com", 
+            projectId: "carspot-2f0fa",
+            storageBucket: "carspot-2f0fa.appspot.com",
+            messagingSenderId: "645950047928",
+            appId: "1:645950047928:web:f83f572b96143b67f8964d",
+            measurementId: "G-MY034QC436"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        let map;
+        let markers = [];
+        let userLocation = null;
+
+        function initMap() {
+            try {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat: -26.355226, lng: -52.866863 },
+                    zoom: 14
+                });
+            } catch (error) {
+                console.error('Erro ao inicializar o mapa:', error);
+                showError('Erro ao carregar o mapa. Por favor, recarregue a página.');
+            }
+        }
+
+        function validateParkingSpot(spot) {
+            return {
+                descricao: spot.descricao || 'Descrição não disponível',
+                endereco: spot.endereco || 'Endereço não disponível',
+                numero: spot.numero || 'S/N',
+                automovel: spot.automovel || 'Não especificado',
+                status: spot.status || 'Status não disponível',
+                latitude: parseFloat(spot.latitude) || 0,
+                longitude: parseFloat(spot.longitude) || 0,
+                rua: spot.rua || 'Rua não especificada'
+            };
+        }
+
+        async function searchParkingSpots() {
+            const searchInput = document.getElementById('searchInput');
+            const address = searchInput.value.trim();
+
+            if (!address) {
+                showError('Por favor, digite um endereço.');
+                return;
+            }
+
+            showLoading();
+            clearMarkers();
+
+            try {
+                const searchLocation = await geocodeAddress(address);
+                userLocation = {
+                    lat: searchLocation.lat(),
+                    lng: searchLocation.lng(),
+                    address: address
+                };
+
+                const parkingSpots = [];
+                const snapshot = await db.collection('vagas').get();
+
+                try {
+                    snapshot.forEach(doc => {
+                        const rawSpot = doc.data();
+                        const latitude = parseFloat(rawSpot.latitude);
+                        const longitude = parseFloat(rawSpot.longitude);
+
+                        if (isNaN(latitude) || isNaN(longitude)) {
+                            console.warn('Invalid coordinates for spot:', doc.id);
+                            return;
+                        }
+
+                        const spotLocation = new google.maps.LatLng(latitude, longitude);
+                        const distance = google.maps.geometry.spherical.computeDistanceBetween(
+                            searchLocation,
+                            spotLocation
+                        );
+
+                        const MAX_DISTANCE = 2000;
+                        if (distance <= MAX_DISTANCE) {
+                            const spotData = {
+                                ...validateParkingSpot(rawSpot),
+                                id: doc.id,
+                                distance: Math.round(distance),
+                                latitude,
+                                longitude
+                            };
+
+                            parkingSpots.push(spotData);
+                        }
+                    });
+
+                    parkingSpots.sort((a, b) => a.distance - b.distance);
+
+                    if (parkingSpots.length > 0) {
+                        displayParkingSpots(parkingSpots);
+                    } else {
+                        showError('Nenhuma vaga encontrada em um raio de 2km.');
+                    }
+
+                } catch (error) {
+                    console.error('Error processing parking spots:', error);
+                    showError('Erro ao processar vagas de estacionamento.');
+                }
+
+                displayParkingSpots(parkingSpots);
+            } catch (error) {
+                showError('Erro ao buscar vagas de estacionamento.');
+            }
+        }
+
+        function geocodeAddress(address) {
+            return new Promise((resolve, reject) => {
+                const geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ address }, (results, status) => {
+                    if (status === google.maps.GeocoderStatus.OK) {
+                        resolve(results[0].geometry.location);
+                    } else {
+                        reject('Erro na geocodificação');
+                    }
+                });
+            });
+        }
+
+        function displayParkingSpots(parkingSpots) {
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = '';
+
+            if (parkingSpots.length === 0) {
+                showError('Nenhuma vaga de estacionamento encontrada.');
+                return;
+            }
+
+            parkingSpots.forEach(spot => {
+                const spotElement = document.createElement('div');
+                spotElement.className = 'parking-spot';
+                spotElement.setAttribute('data-spot-id', spot.id);
+
+                const statusLowerCase = spot.status.toLowerCase();
+                const statusClass = statusLowerCase === 'ocupado' ? 'status-ocupado' : 'status-disponivel';
+                
+                spotElement.innerHTML = `
+                    <h3>${spot.descricao}</h3>
+                    <div class="parking-info">
+                        <div class="info-item">
+                            <span>Endereço:</span>
+                            <strong>${spot.endereco}</strong>
+                        </div>
+                        <div class="info-item">
+                            <span>Numero:</span>
+                            <strong>${spot.numero}</strong>
+                        </div>
+                        <div class="info-item">
+                            <span>Automóvel:</span>
+                            <strong>${spot.automovel}</strong>
+                        </div>
+                        <div class="info-item">
+                            <span>Status:</span>
+                            <span class="${statusClass}">${spot.status}</span>
+                        </div>
+                    </div>
+                    <button class="route-btn" onclick="iniciarRota(${spot.latitude}, ${spot.longitude})">
+                        <i class="fas fa-route"></i> Iniciar Rota
+                    </button>
+                `;
+                resultsList.appendChild(spotElement);
+
+                addMarker(spot.latitude, spot.longitude, spot.descricao);
+            });
+        }
+
+  function iniciarRota(destLat, destLng, spotId) {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const origem = `${position.coords.latitude},${position.coords.longitude}`;
+                const destino = `${destLat},${destLng}`;
+                const url = `https://www.google.com/maps/dir/?api=1&origin=${origem}&destination=${destino}&travelmode=driving`;
+                
+                saveRouteData(spotId)
+                    .then(() => {
+                        window.open(url, '_blank');
+                    })
+                    .catch(error => {
+                        console.error('Erro ao salvar rota:', error);
+                        window.open(url, '_blank');
+                    });
+            }, function(error) {
+                alert("Erro ao obter sua localização. Por favor, permita o acesso à localização.");
+            });
+        } else {
+            alert("Seu navegador não suporta geolocalização.");
+        }
+    }
+
+
+        function addMarker(latitude, longitude, description) {
+            const marker = new google.maps.Marker({
+                position: new google.maps.LatLng(latitude, longitude),
+                map: map,
+                title: description
+            });
+            markers.push(marker);
+        }
+
+        function clearMarkers() {
+            markers.forEach(marker => marker.setMap(null));
+            markers = [];
+        }
+
+        function showLoading() {
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = '<p class="loading">Carregando resultados...</p>';
+        }
+
+        function showError(message) {
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+
+        window.onload = initMap;
+
+
+        async function saveRouteData(spotId) {
+            try {
+                const user = firebase.auth().currentUser;
+                
+                if (!user) {
+                    console.error('Nenhum usuário logado');
+                    return;
+                }
+
+                const userId = user.uid;
+                const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+
+                await db.collection('users').doc(userId).update({
+                    rotas: firebase.firestore.FieldValue.arrayUnion({
+                        spotId: spotId,
+                        timestamp: timestamp
+                    }),
+                    ultimaRota: {
+                        spotId: spotId,
+                        timestamp: timestamp
+                    }
+                });
+
+                console.log('Rota salva com sucesso!');
+            } catch (error) {
+                console.error('Erro ao salvar rota:', error);
+            }
+        }
+
+
+    async function contagemDeCliques(vagaId, usuarioId) {
+        try {
+            const clicksRef = db.collection('users').doc(userId).collection('clicks').doc(vagaId);
+
+            const doc = await clicksRef.get();
+
+            if (doc.exists) {
+                const newClicks = doc.data().cliques + 1;
+                await clicksRef.update({ cliques: newClicks });
+            } else {
+                await clicksRef.set({ cliques: 1 });
+            }
+
+            console.log(`Clique registrado na vaga ${vagaId} para o usuário ${userId}`);
+        } catch (error) {
+            console.error('Erro ao registrar clique:', error);
+        }
+    }
+
+    document.querySelectorAll('.route-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const vagaId = button.getAttribute('data-vaga-id'); 
+            const usuarioId = firebase.auth().currentUser.uid; 
+            
+            contagemDeCliques(vagaId, usuarioId);
+        });
+    });
+
+
+
+
+    </script>
+</body>
+</html>

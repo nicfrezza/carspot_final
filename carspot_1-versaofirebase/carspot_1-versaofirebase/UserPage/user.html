@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-storage-compat.js"></script>
+    <link rel="icon" href="https://cdn.pixabay.com/photo/2016/06/15/16/47/auto-1459346_1280.png" type="image/png">
+
+    <style>
+         :root {
+            --primary-color: #00ff84;
+            --secondary-color: #00b85c; 
+            --background-color: #0A0A0A;
+            --surface-color: #141414;
+            --text-primary: #FFFFFF;
+            --text-secondary: #AAAAAA;
+            --border-color: #333333;
+            --danger-color: #ff4757;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 16px 0 80px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header h2 {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        .profile-card {
+            background: var(--surface-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            background: var(--surface-color);
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+        }
+
+        .save-button {
+            background: var(--primary-color);
+            color: var(--text-primary);
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .logout-button {
+            background: var(--danger-color);
+            color: var(--text-primary);
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(10, 10, 10, 0.9); 
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 11px;
+            gap: 4px;
+            transition: var(--transition);
+            padding: 6px 12px;
+            border-radius: 10px;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .edit-button {
+        background: transparent;
+        color: var(--primary-color);
+        padding: 14px;
+        border: 2px solid var(--primary-color);
+        border-radius: 8px;
+        font-size: 14px;
+        width: 100%;
+        cursor: pointer;
+        margin-top: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .edit-button:hover {
+        background: var(--primary-color);
+        color: var(--background-color);
+    }
+
+    .edit-button[data-editing="true"] {
+        background: transparent;
+        color: var(--danger-color);
+        border: 2px solid var(--danger-color);
+    }
+
+    .edit-button[data-editing="true"]:hover {
+        background: var(--danger-color);
+        color: var(--text-primary);
+    }
+
+    .save-button {
+        background: var(--primary-color);
+        color: var(--background-color);
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        width: 100%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 16px;
+    }
+
+    .save-button:hover {
+        background: var(--secondary-color);
+    }
+
+    .form-input {
+        transition: border-color 0.3s ease;
+    }
+
+    .form-input:not([readonly]) {
+        border-color: var(--primary-color);
+        background-color: rgba(0, 255, 132, 0.1);
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Meu Perfil</h2>
+        </div>
+
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-info">
+                <div class="profile-name" id="profileName">Carregando...</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Nome</label>
+            <input type="text" class="form-input" id="nameField" readonly>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="emailField" readonly>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Telefone</label>
+            <input type="tel" class="form-input" id="phoneField" readonly>
+        </div>
+
+        <button class="save-button" id="saveButton" style="display:none;">Salvar Alterações</button>
+        <button class="edit-button" id="editButton">Editar</button>
+        <button class="logout-button" id="logout">Sair da Conta</button>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="/vagas" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Vagas</span>
+        </a>
+        <a href="/perfil" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Perfil</span>
+        </a>
+    </nav>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmXmb1gBb0VJ1Xw0p4bb7oL4r7Zoc3YBk",
+            authDomain: "carspot-2f0fa.firebaseapp.com",
+            projectId: "carspot-2f0fa",
+            storageBucket: "carspot-2f0fa.appspot.com",
+            messagingSenderId: "645950047928",
+            appId: "1:645950047928:web:f83f572b96143b67f8964d",
+            measurementId: "G-MY034QC436"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const nameField = document.getElementById('nameField');
+        const emailField = document.getElementById('emailField');
+        const phoneField = document.getElementById('phoneField');
+        const profileName = document.getElementById('profileName');
+        const profileDate = document.getElementById('profileDate');
+        const logoutButton = document.getElementById('logout');
+        const saveButton = document.getElementById('saveButton');
+        const editButton = document.getElementById('editButton');
+
+        let isEditing = false;
+
+        async function loadUserData(uid) {
+            try {
+                const userDoc = await getDoc(doc(db, 'users', uid));
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    nameField.value = userData.nome || '';
+                    emailField.value = userData.email || '';
+                    phoneField.value = userData.telefone || '';
+                    profileName.textContent = userData.nome || 'Usuário';
+
+                    if (userData.createdAt) {
+                        const createdAt = userData.createdAt.toDate();
+                        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                        profileDate.textContent = `Membro desde ${createdAt.toLocaleDateString('pt-BR', options)}`;
+                    }
+                } else {
+                    console.log("Dados do usuário não encontrados!");
+                }
+            } catch (error) {
+                console.error("Erro ao carregar dados do usuário:", error);
+            }
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loadUserData(user.uid);
+            } else {
+                window.location.href = '/entrar';
+            }
+        });
+
+        logoutButton.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = '/entrar';
+            } catch (error) {
+                console.error("Erro ao fazer logout:", error);
+            }
+        });
+
+        editButton.addEventListener('click', () => {
+            isEditing = !isEditing;
+
+            if (isEditing) {
+                nameField.removeAttribute('readonly');
+                emailField.removeAttribute('readonly');
+                phoneField.removeAttribute('readonly');
+                saveButton.style.display = 'block'; 
+                editButton.textContent = 'Cancelar Edição'; 
+            } else {
+                nameField.setAttribute('readonly', true);
+                emailField.setAttribute('readonly', true);
+                phoneField.setAttribute('readonly', true);
+                saveButton.style.display = 'none'; 
+                editButton.textContent = 'Editar'; 
+            }
+        });
+
+        saveButton.addEventListener('click', async () => {
+            const user = auth.currentUser;
+
+            if (user) {
+                const userRef = doc(db, 'users', user.uid);
+                await updateDoc(userRef, {
+                    nome: nameField.value,
+                    telefone: phoneField.value
+                });
+                alert('Alterações salvas com sucesso!');
+                editButton.textContent = 'Editar'; 
+                saveButton.style.display = 'none';  
+                nameField.setAttribute('readonly', true);
+                emailField.setAttribute('readonly', true);
+                phoneField.setAttribute('readonly', true);
+            }
+        });
+    </script>
+   
+</body>
+</html>
